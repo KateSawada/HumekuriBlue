@@ -82,6 +82,8 @@ class _CharacteristicInteractionDialogState
       setState(() {
         subscribeOutput = event.toString();
       });
+      // print(event[0].runtimeType); // int
+      // print(event.runtimeType); // _Uint8ArrayView
     });
     setState(() {
       subscribeOutput = 'Notification set';
