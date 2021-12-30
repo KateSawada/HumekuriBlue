@@ -1,0 +1,45 @@
+PODS:
+  - Flutter (1.0.0)
+  - path_provider_ios (0.0.1):
+    - Flutter
+  - pdf_render (0.0.1):
+    - Flutter
+  - Protobuf (3.19.1)
+  - reactive_ble_mobile (0.0.1):
+    - Flutter
+    - Protobuf (~> 3.5)
+    - SwiftProtobuf (~> 1.0)
+  - SwiftProtobuf (1.18.0)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - pdf_render (from `.symlinks/plugins/pdf_render/ios`)
+  - reactive_ble_mobile (from `.symlinks/plugins/reactive_ble_mobile/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Protobuf
+    - SwiftProtobuf
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
+  pdf_render:
+    :path: ".symlinks/plugins/pdf_render/ios"
+  reactive_ble_mobile:
+    :path: ".symlinks/plugins/reactive_ble_mobile/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
+  pdf_render: 0b4e1a615aab83ce88b26c57753049424908a755
+  Protobuf: 3724efa50cb2846d7ccebc8691c574e85fd74471
+  reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
+  SwiftProtobuf: c3c12645230d9b09c72267e0de89468c5543bd86
+
+PODFILE CHECKSUM: b0b272159268c64df66b1b276887e0e0629a3acb
+
+COCOAPODS: 1.11.2
