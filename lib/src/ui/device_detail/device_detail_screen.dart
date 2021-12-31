@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 
 import 'device_interaction_tab.dart';
 
+
+
 class DeviceDetailScreen extends StatelessWidget {
   final DiscoveredDevice device;
 
@@ -32,7 +34,7 @@ class _DeviceDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) => WillPopScope(
         onWillPop: () async {
-          disconnect(device.id);
+          //disconnect(device.id); // 前画面に戻っても接続を解除しないためにコメントアウト
           return true;
         },
         child: DefaultTabController(

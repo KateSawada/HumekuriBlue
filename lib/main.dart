@@ -9,6 +9,8 @@ import 'package:humekuri/src/ui/device_list.dart';
 import 'package:provider/provider.dart';
 import 'src/ble/ble_logger.dart';
 
+import 'package:humekuri/singletons/ble_device_notify.dart';
+
 const _themeColor = Colors.blue;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -112,9 +114,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  void onReceiveEventSetState() => setState(() {
+    print("event received on main");
+  });
 
-@override
+  @override
   Widget build(BuildContext context) {
+    bleDeviceNotify.addListener(onReceiveEventSetState);
     return MaterialApp(
       title: 'Flutter PDF View',
       debugShowCheckedModeBanner: false,
@@ -185,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                               child: const Icon(Icons.skip_next),
                             ),
                             */
-                            body: Text("aaa"),
+                            body: Text('Output: ${bleDeviceNotify.event.toString()}'),
                           );
                            
                           }

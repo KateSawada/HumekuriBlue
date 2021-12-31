@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:humekuri/singletons/ble_device_notify.dart';
 import 'package:humekuri/src/ble/ble_device_connector.dart';
 import 'package:humekuri/src/ble/ble_device_interactor.dart';
 import 'package:functional_data/functional_data.dart';
 import 'package:provider/provider.dart';
+import 'package:humekuri/singletons/ble_device_notify.dart';
 
 import 'characteristic_interaction_dialog.dart';
 
 part 'device_interaction_tab.g.dart';
+
 //ignore_for_file: annotate_overrides
 
 class DeviceInteractionTab extends StatelessWidget {
@@ -25,6 +28,7 @@ class DeviceInteractionTab extends StatelessWidget {
                 __) =>
             _DeviceInteractionTab(
           viewModel: DeviceInteractionViewModel(
+              device: device,
               deviceId: device.id,
               connectionStatus: connectionStateUpdate.connectionState,
               deviceConnector: deviceConnector,
@@ -38,12 +42,14 @@ class DeviceInteractionTab extends StatelessWidget {
 @FunctionalData()
 class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
   const DeviceInteractionViewModel({
+    required this.device,
     required this.deviceId,
     required this.connectionStatus,
     required this.deviceConnector,
     required this.discoverServices,
   });
 
+  final DiscoveredDevice device;
   final String deviceId;
   final DeviceConnectionState connectionStatus;
   final BleDeviceConnector deviceConnector;
@@ -59,6 +65,13 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
 
   void disconnect() {
     deviceConnector.disconnect(deviceId);
+  }
+
+  void subscribe() {
+    // ここに characteristic_interaction_dialog.dart / subscribeCharacteristic
+    // 移植する
+    bleDeviceNotify.setDevice(deviceId, device);
+    
   }
 }
 
@@ -89,6 +102,8 @@ class _DeviceInteractionTabState extends State<_DeviceInteractionTab> {
       discoveredServices = result;
     });
   }
+
+  
 
   @override
   Widget build(BuildContext context) => CustomScrollView(
@@ -133,6 +148,12 @@ class _DeviceInteractionTabState extends State<_DeviceInteractionTab> {
                             ? discoverServices
                             : null,
                         child: const Text("Discover Services"),
+                      ),
+                      ElevatedButton(
+                        onPressed: widget.viewModel.deviceConnected
+                            ? widget.viewModel.subscribe
+                            : null,
+                        child: const Text("Subscribe"),
                       ),
                     ],
                   ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:humekuri/src/ble/ble_device_interactor.dart';
 import 'package:provider/provider.dart';
+import 'package:humekuri/singletons/ble_device_notify.dart';
 
 class CharacteristicInteractionDialog extends StatelessWidget {
   const CharacteristicInteractionDialog({
@@ -69,7 +70,7 @@ class _CharacteristicInteractionDialogState
     textEditingController = TextEditingController();
     super.initState();
   }
-
+  
   @override
   void dispose() {
     subscribeStream?.cancel();
@@ -85,6 +86,7 @@ class _CharacteristicInteractionDialogState
       // print(event[0].runtimeType); // int
       // print(event.runtimeType); // _Uint8ArrayView
     });
+    //bleDeviceNotify.subscribe(event);
     setState(() {
       subscribeOutput = 'Notification set';
     });
