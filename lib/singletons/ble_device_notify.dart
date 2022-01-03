@@ -2,37 +2,38 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:humekuri/src/ble/ble_device_interactor.dart';
+import 'package:humekuri/src/ble/ble_scanner.dart';
+
 
 class BleDeviceNotify extends ChangeNotifier{
   static final BleDeviceNotify _bleDeviceNotify = new BleDeviceNotify._internal();
 
   bool isDeviceConnected = false;
   String deviceId = "";
-  List<int> event = [0, 0, 0, 0];
 
   final flutterReactiveBle = FlutterReactiveBle();
 
-  QualifiedCharacteristic characteristic;
-  DiscoveredDevice discoveredDevice;
+  late QualifiedCharacteristic characteristic;
+  late DiscoveredDevice? discoveredDevice;
+  // serviceDiscoverer = BleDeviceInteractor(bleDiscoverServices: bleDiscoverServices, readCharacteristic: readCharacteristic, writeWithResponse: writeWithResponse, writeWithOutResponse: writeWithOutResponse, logMessage: logMessage, subscribeToCharacteristic: subscribeToCharacteristic);
 
-  BleDeviceInteractor serviceDiscoverer;
-  
-  void setDevice(String deviceId, DiscoveredDevice discoveredDevice){
+  /*
+  void setDevice(String deviceId, DiscoveredService service, DiscoveredDevice? discoveredDevice,){
     this.discoveredDevice = discoveredDevice;
     this.deviceId = deviceId;
-    flutterReactiveBle.connectToDevice(id: this.deviceId);
-    characteristic = QualifiedCharacteristic(serviceId: discoveredDevice.serviceUuids[0], characteristicId: discoveredDevice.cha, deviceId: this.deviceId);
+    //serviceDiscoverer.discoverServices(deviceId);
+    //flutterReactiveBle.connectToDevice(id: this.deviceId);
+    characteristic = QualifiedCharacteristic(serviceId: discoveredDevice!.serviceUuids[0], characteristicId: service.serviceId, deviceId: this.deviceId);
+    setSubscribe();
+    print("set");
   }
   
   void setSubscribe(){
     flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
-      this.onReceiveEvent(data);
+      onReceiveEvent(data);
     });
-
-    
-
   }
-
+  */
   /*
   late StreamSubscription<List<int>>? subscribeStream;
   final QualifiedCharacteristic characteristic;
@@ -48,13 +49,71 @@ class BleDeviceNotify extends ChangeNotifier{
 
 
 
-  void onReceiveEvent(List<int> event) {
-    this.event = event;
+  void onReceiveEvent() {
     print("event received on singleton");
 
     // Listenerへの変更の通知
     // https://qiita.com/agajo/items/50d5d7497d28730de1d3#5-changenotifier
     notifyListeners(); 
+  }
+
+  String logMessage (String str){
+    print(str);
+    return str;
+  }
+
+  // connect from home screen
+  void connectAndSetNotify() {
+    print("start connct and set");
+    BleScanner bleScanner = BleScanner(
+      ble: flutterReactiveBle, 
+      logMessage: logMessage);
+    List<DiscoveredDevice> discoveredDevices = [];
+    bool scanIsInProgress = false;
+    BleScannerState bleScannerState = 
+      BleScannerState(
+        discoveredDevices: discoveredDevices, 
+        scanIsInProgress: scanIsInProgress
+        );
+    
+    // Device Id    "504918EF-9FA6-DD98-8E9B0ABB670E19E4"
+    // Service Id   "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+    //bleScanner.startScan([Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b")]);
+    var stream;
+    stream = flutterReactiveBle.scanForDevices(withServices: [Uuid.parse("4fafc201-1fb5-459e-8fcc-c5c9c331914b")]).listen((device) {
+      print("${device.name}\n${device.id}");
+      flutterReactiveBle.connectToDevice(id: device.id).listen((event) {
+        if (event.connectionState == DeviceConnectionState.connected){
+          setNotification();
+        }
+        print(event);
+      });
+      
+      discoveredDevice = device;
+      
+      //setNotification(device);
+      print("stop scanning");
+      
+        stream.cancel();
+    });
+    print("done");
+    
+    //bleScannerState.discoveredDevices.
+
+    //print(discoveredDevices);
+  }
+
+  void setNotification(){
+    print("set");
+    characteristic = 
+        QualifiedCharacteristic(
+          characteristicId: Uuid.parse("beb5483e-36e1-4688-b7f5-ea07361b26a8"), 
+          serviceId: discoveredDevice!.serviceUuids[0], 
+          deviceId: discoveredDevice!.id);
+        flutterReactiveBle.subscribeToCharacteristic(characteristic).listen((data) {
+          onReceiveEvent();
+          print(data);
+        });
   }
 
   factory BleDeviceNotify(){
@@ -63,3 +122,15 @@ class BleDeviceNotify extends ChangeNotifier{
   BleDeviceNotify._internal();
 }
 final bleDeviceNotify = BleDeviceNotify();
+
+class deviceList extends ChangeNotifier {
+  List<DiscoveredDevice> discoveredDevices = [];
+
+  //UnmodifiableListView<Note> get notes => UnmodifiableListView(_notes);
+
+  void add(DiscoveredDevice discoveredDevice) {
+    discoveredDevices.add(discoveredDevice);
+    notifyListeners();
+  }
+
+}

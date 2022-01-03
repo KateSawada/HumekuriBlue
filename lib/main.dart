@@ -114,9 +114,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void onReceiveEventSetState() => setState(() {
-    print("event received on main");
-  });
+  void onReceiveEventSetState() {
+    setState(() {
+    });
+    print("event received on main"); // カウントが蓄積してる?
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +162,18 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 TextButton(
+                  child: Text("Connect Bluetooth"),
+                  onPressed: () {
+                    bleDeviceNotify.connectAndSetNotify();
+                  },
+                ),
+                TextButton(
+                  child: Text("Notify Bluetooth"),
+                  onPressed: () {
+                    bleDeviceNotify.setNotification();
+                  },
+                ),
+                TextButton(
                   child: Text("Open PDF"),
                   onPressed: () {
                     if (true) {
@@ -191,7 +205,9 @@ class _HomePageState extends State<HomePage> {
                               child: const Icon(Icons.skip_next),
                             ),
                             */
-                            body: Text('Output: ${bleDeviceNotify.event.toString()}'),
+                            body: 
+                            //Text('Output: ${bleDeviceNotify.event.toString()}'),
+                            Text("dummy")
                           );
                            
                           }

@@ -41,20 +41,21 @@ class DeviceInteractionTab extends StatelessWidget {
 @immutable
 @FunctionalData()
 class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
-  const DeviceInteractionViewModel({
-    required this.device,
+  DeviceInteractionViewModel({
     required this.deviceId,
     required this.connectionStatus,
     required this.deviceConnector,
     required this.discoverServices,
+    this.device,
   });
 
-  final DiscoveredDevice device;
+  
   final String deviceId;
   final DeviceConnectionState connectionStatus;
   final BleDeviceConnector deviceConnector;
   @CustomEquality(Ignore())
   final Future<List<DiscoveredService>> Function() discoverServices;
+  DiscoveredDevice? device;
 
   bool get deviceConnected =>
       connectionStatus == DeviceConnectionState.connected;
@@ -67,12 +68,7 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
     deviceConnector.disconnect(deviceId);
   }
 
-  void subscribe() {
-    // ここに characteristic_interaction_dialog.dart / subscribeCharacteristic
-    // 移植する
-    bleDeviceNotify.setDevice(deviceId, device);
-    
-  }
+  
 }
 
 class _DeviceInteractionTab extends StatefulWidget {
@@ -102,6 +98,20 @@ class _DeviceInteractionTabState extends State<_DeviceInteractionTab> {
       discoveredServices = result;
     });
   }
+  /*
+  Future<void> subscribe() async {
+    // ここに characteristic_interaction_dialog.dart / subscribeCharacteristic
+    // 移植する
+    print("in subscribe");
+    await discoverServices();
+    setState(() {
+      
+    });
+    //print("after discover");
+    //bleDeviceNotify.setDevice(widget.viewModel.deviceId, discoveredServices[0], widget.viewModel.device,);
+    
+  }
+  */
 
   
 
@@ -144,16 +154,10 @@ class _DeviceInteractionTabState extends State<_DeviceInteractionTab> {
                         child: const Text("Disconnect"),
                       ),
                       ElevatedButton(
-                        onPressed: widget.viewModel.deviceConnected
+                        onPressed: (widget.viewModel.deviceConnected
                             ? discoverServices
-                            : null,
+                            : null),
                         child: const Text("Discover Services"),
-                      ),
-                      ElevatedButton(
-                        onPressed: widget.viewModel.deviceConnected
-                            ? widget.viewModel.subscribe
-                            : null,
-                        child: const Text("Subscribe"),
                       ),
                     ],
                   ),
