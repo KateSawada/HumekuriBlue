@@ -225,45 +225,13 @@ class _HomePageState extends State<HomePage> {
                                   // uncomment below line to scroll vertically
                                   scrollDirection: Axis.horizontal,
                                   showPicker: false,
-                                  showNavigation: true,
+                                  showNavigation: false,
                                   showIndicator: false,
                                   controller: bleDeviceNotify.pageControllerLeft,
                                   onPageChanged: (page) => {
-                                    bleDeviceNotify.onPageChanged(page)
+                                    bleDeviceNotify.onLeftPageChanged(page)
                                   },
-                                  navigationBuilder:
-                                    (context, page, totalPages, jumpToPage, animateToPage) {
-                                      bleDeviceNotify.animateToPage = animateToPage;
-                                  return ButtonBar(
-                                    alignment: MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      IconButton(
-                                        icon: Icon(Icons.first_page),
-                                        onPressed: () {
-                                          animateToPage(page: 0);
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.arrow_back),
-                                        onPressed: () {
-                                          animateToPage(page: page! - 2);
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.arrow_forward),
-                                        onPressed: () {
-                                          animateToPage(page: page);
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.last_page),
-                                        onPressed: () {
-                                          jumpToPage(page: totalPages! - 1);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                }
+
                                 ),
                               ),
                               Expanded(child: 
@@ -276,6 +244,10 @@ class _HomePageState extends State<HomePage> {
                                   showPicker: false,
                                   showNavigation: false,
                                   //showIndicator: false,
+                                  //onPageChanged: (page) => {
+                                  //  bleDeviceNotify.onRightPageChanged(page)
+                                  //},
+                                  enableSwipeNavigation: false,
                                 ),
                               ),
                             ]),

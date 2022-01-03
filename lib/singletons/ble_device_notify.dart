@@ -60,9 +60,27 @@ class BleDeviceNotify extends ChangeNotifier{
     });
   }
   */
-  void onPageChanged(int page) {
-    print(page);
-    
+  void onLeftPageChanged(int page) {
+    // 左のページは最後のページにならないようにする
+    if (page + 1 == totalPage) {
+      pageControllerLeft.animateToPage(currentPage , duration: Duration(milliseconds: 200), curve: Curves.linear);
+      return;
+    }
+
+    // ページ更新
+    currentPage = page;
+    pageControllerRight.animateToPage(currentPage + 1 , duration: Duration(milliseconds: 200), curve: Curves.linear);
+  }
+  void onRightPageChanged(int page) {
+    // 右のページは最初のページにならないようにする
+    if (page == 0) {
+      pageControllerRight.animateToPage(1 , duration: Duration(milliseconds: 200), curve: Curves.linear);
+      return;
+    }
+
+    // ページ更新
+    currentPage = page - 1;
+    pageControllerLeft.animateToPage(currentPage, duration: Duration(milliseconds: 200), curve: Curves.linear);
   }
 
   void loadDocment() async {
@@ -76,7 +94,16 @@ class BleDeviceNotify extends ChangeNotifier{
 
 
   void onReceiveEvent() {
+    goNextPage();
+    
 
+
+    // Listenerへの変更の通知
+    // https://qiita.com/agajo/items/50d5d7497d28730de1d3#5-changenotifier
+    //notifyListeners(); 
+  }
+
+  void goNextPage() {
     if (currentPage + 2 < totalPage){
       currentPage ++;
       //pageControllerLeft.jumpToPage(currentPage);
@@ -86,11 +113,6 @@ class BleDeviceNotify extends ChangeNotifier{
       pageControllerRight.animateToPage(currentPage + 1, duration: Duration(milliseconds: 400), curve: Curves.linear);
 
     }
-
-
-    // Listenerへの変更の通知
-    // https://qiita.com/agajo/items/50d5d7497d28730de1d3#5-changenotifier
-    //notifyListeners(); 
   }
 
   String logMessage (String str){
