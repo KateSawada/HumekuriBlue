@@ -143,6 +143,8 @@ class BleDeviceNotify extends ChangeNotifier{
       flutterReactiveBle.connectToDevice(id: device.id).listen((event) {
         if (event.connectionState == DeviceConnectionState.connected){
           setNotification();
+          isDeviceConnected = true;
+          notifyListeners(); 
         }
         print(event);
       });
@@ -172,6 +174,7 @@ class BleDeviceNotify extends ChangeNotifier{
           onReceiveEvent();
           print(data);
         });
+    
   }
 
   factory BleDeviceNotify(){

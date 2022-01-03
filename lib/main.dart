@@ -126,9 +126,19 @@ class _HomePageState extends State<HomePage> {
     print("event received on main"); // カウントが蓄積してる?
   }
 
+  void onConnectBluetoothPressed() {
+    bleDeviceNotify.connectAndSetNotify();
+  }
+
+  void ss(){
+    setState(() {
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    //bleDeviceNotify.addListener(onReceiveEventSetState);
+    bleDeviceNotify.addListener(ss);
     return MaterialApp(
       title: 'Flutter PDF View',
       debugShowCheckedModeBanner: false,
@@ -167,18 +177,19 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                 ),
-                TextButton(
+                ElevatedButton(
                   child: Text("Connect Bluetooth"),
-                  onPressed: () {
-                    bleDeviceNotify.connectAndSetNotify();
-                  },
+                  onPressed: bleDeviceNotify.isDeviceConnected ? null :
+                    onConnectBluetoothPressed
+                  ,
+
                 ),
-                TextButton(
-                  child: Text("Notify Bluetooth"),
-                  onPressed: () {
-                    bleDeviceNotify.setNotification();
-                  },
-                ),
+                //TextButton(
+                //  child: Text("Notify Bluetooth"),
+                //  onPressed: () {
+                //    bleDeviceNotify.setNotification();
+                //  },
+                //),
                 TextButton(
                   child: Text("Open PDF"),
                   onPressed: () {
