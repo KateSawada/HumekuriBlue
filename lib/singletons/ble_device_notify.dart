@@ -4,9 +4,23 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:humekuri/src/ble/ble_device_interactor.dart';
 import 'package:humekuri/src/ble/ble_scanner.dart';
 
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 
 class BleDeviceNotify extends ChangeNotifier{
   static final BleDeviceNotify _bleDeviceNotify = new BleDeviceNotify._internal();
+
+  late PDFDocument documentLeft;
+  late PDFDocument documentRight;
+
+  final PageController pageControllerLeft = PageController();
+  final PageController pageControllerRight = PageController(initialPage: 1);
+
+  
+  late var animateToPage;
+
+  int currentPage = 0;
+  int totalPage = 0;
+  
 
   bool isDeviceConnected = false;
   String deviceId = "";
@@ -46,15 +60,37 @@ class BleDeviceNotify extends ChangeNotifier{
     });
   }
   */
+  void onPageChanged(int page) {
+    print(page);
+    
+  }
+
+  void loadDocment() async {
+    print("start load");
+    documentLeft = await PDFDocument.fromAsset("assets/anima.pdf");
+    documentRight = await PDFDocument.fromAsset("assets/anima.pdf");
+    totalPage = documentLeft.count;
+    print("end load: pages ${totalPage}");
+  }
 
 
 
   void onReceiveEvent() {
-    print("event received on singleton");
+
+    if (currentPage + 2 < totalPage){
+      currentPage ++;
+      //pageControllerLeft.jumpToPage(currentPage);
+      pageControllerLeft.animateToPage(currentPage , duration: Duration(milliseconds: 400), curve: Curves.linear);
+      //pageControllerRight.jumpToPage(currentPage + 1  );
+      //.animateToPage(currentPage, duration: Duration(microseconds: 10), curve: const Curve());
+      pageControllerRight.animateToPage(currentPage + 1, duration: Duration(milliseconds: 400), curve: Curves.linear);
+
+    }
+
 
     // Listenerへの変更の通知
     // https://qiita.com/agajo/items/50d5d7497d28730de1d3#5-changenotifier
-    notifyListeners(); 
+    //notifyListeners(); 
   }
 
   String logMessage (String str){
@@ -122,15 +158,3 @@ class BleDeviceNotify extends ChangeNotifier{
   BleDeviceNotify._internal();
 }
 final bleDeviceNotify = BleDeviceNotify();
-
-class deviceList extends ChangeNotifier {
-  List<DiscoveredDevice> discoveredDevices = [];
-
-  //UnmodifiableListView<Note> get notes => UnmodifiableListView(_notes);
-
-  void add(DiscoveredDevice discoveredDevice) {
-    discoveredDevices.add(discoveredDevice);
-    notifyListeners();
-  }
-
-}

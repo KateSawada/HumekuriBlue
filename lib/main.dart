@@ -8,7 +8,7 @@ import 'package:humekuri/src/ui/ble_status_screen.dart';
 import 'package:humekuri/src/ui/device_list.dart';
 import 'package:provider/provider.dart';
 import 'src/ble/ble_logger.dart';
-
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:humekuri/singletons/ble_device_notify.dart';
 
 const _themeColor = Colors.blue;
@@ -107,13 +107,19 @@ class HomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title = "fight!";
+  final String title = "humekuri";
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    bleDeviceNotify.loadDocment();
+  }
+
   void onReceiveEventSetState() {
     setState(() {
     });
@@ -122,7 +128,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bleDeviceNotify.addListener(onReceiveEventSetState);
+    //bleDeviceNotify.addListener(onReceiveEventSetState);
     return MaterialApp(
       title: 'Flutter PDF View',
       debugShowCheckedModeBanner: false,
@@ -207,7 +213,73 @@ class _HomePageState extends State<HomePage> {
                             */
                             body: 
                             //Text('Output: ${bleDeviceNotify.event.toString()}'),
-                            Text("dummy")
+                            //Text("dummy")
+                            Row(children: [
+                              Expanded(child: 
+                              
+                                PDFViewer(
+                                  document: bleDeviceNotify.documentLeft,
+                                  zoomSteps: 1,
+                                  //uncomment below line to preload all pages
+                                  lazyLoad: false,
+                                  // uncomment below line to scroll vertically
+                                  scrollDirection: Axis.horizontal,
+                                  showPicker: false,
+                                  showNavigation: true,
+                                  showIndicator: false,
+                                  controller: bleDeviceNotify.pageControllerLeft,
+                                  onPageChanged: (page) => {
+                                    bleDeviceNotify.onPageChanged(page)
+                                  },
+                                  navigationBuilder:
+                                    (context, page, totalPages, jumpToPage, animateToPage) {
+                                      bleDeviceNotify.animateToPage = animateToPage;
+                                  return ButtonBar(
+                                    alignment: MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      IconButton(
+                                        icon: Icon(Icons.first_page),
+                                        onPressed: () {
+                                          animateToPage(page: 0);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.arrow_back),
+                                        onPressed: () {
+                                          animateToPage(page: page! - 2);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.arrow_forward),
+                                        onPressed: () {
+                                          animateToPage(page: page);
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.last_page),
+                                        onPressed: () {
+                                          jumpToPage(page: totalPages! - 1);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                }
+                                ),
+                              ),
+                              Expanded(child: 
+                                PDFViewer(
+                                  document: bleDeviceNotify.documentRight,
+                                  zoomSteps: 1,
+                                  //lazyLoad: false,
+                                  controller: bleDeviceNotify.pageControllerRight,
+                                  scrollDirection: Axis.horizontal,
+                                  showPicker: false,
+                                  showNavigation: false,
+                                  //showIndicator: false,
+                                ),
+                              ),
+                            ]),
+                            
                           );
                            
                           }
