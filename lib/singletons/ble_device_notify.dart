@@ -5,6 +5,7 @@ import 'package:humekuri/src/ble/ble_device_interactor.dart';
 import 'package:humekuri/src/ble/ble_scanner.dart';
 
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
+import 'dart:io';
 
 class BleDeviceNotify extends ChangeNotifier{
   static final BleDeviceNotify _bleDeviceNotify = new BleDeviceNotify._internal();
@@ -61,6 +62,7 @@ class BleDeviceNotify extends ChangeNotifier{
   }
   */
   void onLeftPageChanged(int page) {
+    //print("${page} / ${totalPage}");
     // 左のページは最後のページにならないようにする
     if (page + 1 == totalPage) {
       pageControllerLeft.animateToPage(currentPage , duration: Duration(milliseconds: 200), curve: Curves.linear);
@@ -120,6 +122,13 @@ class BleDeviceNotify extends ChangeNotifier{
     return str;
   }
 
+  void setFile(File file) async {
+    documentLeft = await PDFDocument.fromFile(file);
+    documentRight = await PDFDocument.fromFile(file);
+    totalPage = documentLeft.count;
+    currentPage = 0;
+  }
+
   // connect from home screen
   void connectAndSetNotify() {
     print("start connct and set");
@@ -145,6 +154,9 @@ class BleDeviceNotify extends ChangeNotifier{
           setNotification();
           isDeviceConnected = true;
           notifyListeners(); 
+        } else if (event.connectionState == DeviceConnectionState.disconnected) {
+          isDeviceConnected = false;
+          notifyListeners();
         }
         print(event);
       });

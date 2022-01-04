@@ -53,5 +53,9 @@
 	<string>Need Location permission</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Need Location permission</string>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 </dict>
 </plist>

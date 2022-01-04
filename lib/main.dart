@@ -11,6 +11,10 @@ import 'src/ble/ble_logger.dart';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:humekuri/singletons/ble_device_notify.dart';
 
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+
+
 const _themeColor = Colors.blue;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -114,10 +118,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String serviceUuid = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+  TextEditingController serviceUuidTextController =  TextEditingController();
+
   @override
   void initState() {
     super.initState();
     bleDeviceNotify.loadDocment();
+    serviceUuidTextController.text = serviceUuid;
   }
 
   void onReceiveEventSetState() {
@@ -136,6 +144,16 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void fileOpen () async {
+    FilePickerResult? importFileDataO = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      // 拡張子のピリオドは付けずに指定する。付けるとエラーになる
+                      allowedExtensions: ['pdf'],
+                    );
+    File file = File(importFileDataO!.files.single.path!);
+    bleDeviceNotify.setFile(file);
+  }
+
   @override
   Widget build(BuildContext context) {
     bleDeviceNotify.addListener(ss);
@@ -143,13 +161,14 @@ class _HomePageState extends State<HomePage> {
       title: 'Flutter PDF View',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: const Text('example app')
+        appBar: AppBar(title: const Text('humekuri')
         ),
         backgroundColor: Colors.white,
         body: Center(child: Builder(
           builder: (BuildContext context) {
             return Column(
               children: <Widget>[
+                /*
                 TextButton(
                   child: Text("Bluetooth Setting"),
                   onPressed: () {
@@ -158,38 +177,61 @@ class _HomePageState extends State<HomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                          
+                            return const DeviceListScreen();
 
-                          return const DeviceListScreen();
-                           
                           }
-                          
-                          /*
-                          SfPdfViewer.network(
-                          'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
-                          key: _pdfViewerKey,
-                          scrollDirection: PdfScrollDirection.horizontal,
-                          pageLayoutMode: PdfPageLayoutMode.continuous,
-                          ),
-                        */
                         ),
                       );
                     }
                   },
-                ),
-                ElevatedButton(
-                  child: Text("Connect Bluetooth"),
-                  onPressed: bleDeviceNotify.isDeviceConnected ? null :
-                    onConnectBluetoothPressed
-                  ,
+                ),*/
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  
+                  children: [
+                    Text("Service Uuid: "),
+                    Container(
+                      width: 340,
+                      child: TextField(
+                        minLines: 1,
+                        maxLines: 1,
+                        autocorrect: false,
+                        controller: serviceUuidTextController,
+                      ),
+                    ),
+                    
+                    ElevatedButton(
+                      child: Text("Connect Bluetooth"),
+                      onPressed: bleDeviceNotify.isDeviceConnected ? null :
+                        onConnectBluetoothPressed
+                      ,
 
+                    ),
+                  ],
                 ),
+                
+                
+                
                 //TextButton(
                 //  child: Text("Notify Bluetooth"),
                 //  onPressed: () {
                 //    bleDeviceNotify.setNotification();
                 //  },
                 //),
+                TextButton(
+                  onPressed: (){
+                    fileOpen();
+                    
+                    /*
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (context) {
+                       return Scaffold();
+                     }));
+                     */
+                  }, 
+                  child: Text("Choose and Open PDF")
+                ),
+                
                 TextButton(
                   child: Text("Open PDF"),
                   onPressed: () {
@@ -201,27 +243,7 @@ class _HomePageState extends State<HomePage> {
                           
 
                           return Scaffold(
-                            /*
-                            body: Padding(
-                              padding: EdgeInsets.only(top: marginTopBottom.toDouble(), bottom: marginTopBottom.toDouble()),
-                              child: SfPdfViewer.file(file,
-                              key: _pdfViewerKey,
-                              scrollDirection: PdfScrollDirection.horizontal,
-                              pageLayoutMode: PdfPageLayoutMode.continuous,
-                              enableDoubleTapZooming: false,
-                              controller: _pdfViewerController,
                             
-                            )),
-                            floatingActionButton: FloatingActionButton(
-                              onPressed: () {
-                                // Add your onPressed code here!
-                                print("next");
-                                _pdfViewerController.nextPage();
-                              },
-                              backgroundColor: Colors.green,
-                              child: const Icon(Icons.skip_next),
-                            ),
-                            */
                             body: 
                             //Text('Output: ${bleDeviceNotify.event.toString()}'),
                             //Text("dummy")
@@ -266,15 +288,6 @@ class _HomePageState extends State<HomePage> {
                           );
                            
                           }
-                          
-                          /*
-                          SfPdfViewer.network(
-                          'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
-                          key: _pdfViewerKey,
-                          scrollDirection: PdfScrollDirection.horizontal,
-                          pageLayoutMode: PdfPageLayoutMode.continuous,
-                          ),
-                        */
                         ),
                       );
                     }
