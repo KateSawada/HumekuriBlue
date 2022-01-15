@@ -87,8 +87,8 @@ class BleDeviceNotify extends ChangeNotifier{
 
   void loadDocment() async {
     print("start load");
-    documentLeft = await PDFDocument.fromAsset("assets/anima.pdf");
-    documentRight = await PDFDocument.fromAsset("assets/anima.pdf");
+    documentLeft = await PDFDocument.fromAsset("assets/sample.pdf");
+    documentRight = await PDFDocument.fromAsset("assets/sample.pdf");
     totalPage = documentLeft.count;
     print("end load: pages ${totalPage}");
   }
